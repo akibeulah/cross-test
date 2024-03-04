@@ -1,0 +1,8 @@
+*/build
+node_modules
+.idea
+coverage
+
+/website/*
+!website.tar.gz
+access.log

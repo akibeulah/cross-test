@@ -1,0 +1,19 @@
+image:
+  file: .gitpod.Dockerfile
+
+tasks:
+  - name: Build project
+    command: |
+      node --version
+      npm --version
+      npm run ci-all
+      npm run build
+vscode:
+  extensions:
+    - dbaeumer.vscode-eslint
+    - waderyan.gitblame
+    - eamodio.gitlens
+    - christian-kohler.npm-intellisense
+    - streetsidesoftware.code-spell-checker
+    - eg2.vscode-npm-script
+    - orta.vscode-jest

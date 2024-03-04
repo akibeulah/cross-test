@@ -1,0 +1,77 @@
+# This workflow verifies the quality of pull requests.
+# It covers three parallel checks: Analyze, Test and Integration test
+
+name: Verify
+
+on:
+  push:
+    tags-ignore:
+      - '**'
+    branches-ignore:
+      - 'main'
+  workflow_dispatch:
+    branches:
+      - '**'
+
+# Environment variables can be overridden in .github/env
+env:
+  GITHUB_TOKEN: ${{ secrets.ENG_STD_TOKEN }}
+  DEFAULT_PASSWORD: Password1!
+
+jobs:
+
+  analyze:
+    name: Analyze
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+      - name: npm 8.6.0
+        run: npm i -g npm@8.6.0
+      - name: Install dependencies
+        run: npm run ci-all
+      - name: Build
+        run: npm run build
+      - name: Analyze
+        run: npm run analyze
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+      - name: npm 8.6.0
+        run: npm i -g npm@8.6.0
+      - name: Install dependencies
+        run: npm run ci-all
+      - name: Build
+        run: npm run build
+      - name: Test
+        run: npm run test
+  run:
+    name: Run main
+    runs-on: ubuntu-latest
+    needs: [ analyze, test ]
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+      - name: npm 8.6.0
+        run: npm i -g npm@8.6.0
+      - name: Install dependencies
+        run: npm run ci-all
+      - name: main
+        run: npm run main
+        timeout-minutes: 10
